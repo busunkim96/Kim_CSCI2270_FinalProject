@@ -1,7 +1,7 @@
 # Spring 2015 Final Project for CSCI 2270 
 ##Part 1: 
 ####Project Summary:
-One	paragraph description	of how the program works and what it does.
+This project uses information obtained on CU Boulder CS courses from Fall 2006 - Fall 2014 provided by the [Office of Planning, Budget, and Analysis](http://www.colorado.edu/pba/course/). It uses information provided on past year's courses to generate a list of courses exclusively offered in the fall or spring. 
 ####How to Run:
 This section contains	instructions,	with examples, of how to run your program. You should also include a link here to the project documentation that you will provide in a separate	file.
 ####Dependencies
