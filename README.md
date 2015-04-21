@@ -1,4 +1,4 @@
-#Spring 2015 Final Project for CSCI 2270 
+###Spring 2015 Final Project for CSCI 2270 
 ######Project Summary:
 This project uses information obtained on CU Boulder CS courses from Fall 2006 - Fall 2014 provided by the [Office of Planning, Budget, and Analysis](http://www.colorado.edu/pba/course/). Each unique course is stored in a hashtable using a hashSum function on the course number (e.g., 2270). Each course will have be a struct member with the following attributes:
 + string for course title (most recent version of course title if more than one)
