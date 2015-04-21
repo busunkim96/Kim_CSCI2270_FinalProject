@@ -19,9 +19,8 @@ courses::courses(std::string csvFileName)
     if(courseFile.is_open()){
         std::cout<< "open!" << std::endl;
         getline(courseFile, line);//this discards the header line
-        //std::cout <<line << std::endl;
+
         while(getline(courseFile, line) && line != ""){
-            //std::cout << line <<"\n" << std::endl;
             std::stringstream inLine(line);
             getline(inLine, yearTerm, ',');//yearTerm is of the form [year][1 or 7] (e.g., 20107) The last digit indicates the term. 1 is Fall, 7 is Spring
             yearSubString = yearTerm.substr(0,4);
