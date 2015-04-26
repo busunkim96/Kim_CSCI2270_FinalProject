@@ -6,7 +6,7 @@ This project uses information obtained on CU Boulder courses from Fall 2006 - Fa
 Opening the codeblocks project should be the easiest way. Otherwise, you will need to have:
   1. courses.h, course.cpp, driver.cpp 
   2. At least one csv file with course information in the same location as the driver.cpp file.
-The csv file must be formatted __exactly__ like the two examples provided. (courseList.csv and appm.csv). You can create files for different deparments by following the steps below.
+The csv file must be formatted like the two examples provided. (courseList.csv and appm.csv). You can create files for different deparments by following the steps below.
     - download [this excel file]("http://www.colorado.edu/pba/course/IGroup.xlsx")
     - go to the "data" tab
     - filter for one department(e.g., "APPM", "CSCI", "COEN", "MATH")
@@ -21,9 +21,13 @@ Make sure you're using C++11.
 ######Contributors
 
 ######Open	issues/bugs
+
 __Issues__
+
 1. If the user tries to make a new hash table after already having created and populated one, the program behaves correctly, but it looks like the destructor might not be properly called (to destroy the original hash table before creating a new one).
 2. The course name is not updating to the most recent version. For example, if in 2006 CSCI 2270 had a course name "DATA STRUCTURES" it does not change even if it was called "Data Structures" in 2013.
+
 __Enhancements__
+
 1. Expand so multiple deparmtents can be handled.
 2. Add the average GPA info from the excel file to the "section" object. 
