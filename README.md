@@ -14,6 +14,28 @@ The csv file must be formatted like the two examples provided. (courseList.csv a
     - paste it into a different excel file and save it as a .csv file. 
     - Make sure that there are no extra blank cells below the cells with data. 
 
+Once you run the program you will see a menu that you can interact with.
+```
+======Main Menu======
+1. Create an empty table.
+2. Fill the table.
+3. Find a course.
+4. Print all courses.
+5. Print courses only offered one semester.
+6. Print courses more often offered in Fall.
+7. Print courses more often offered in Spring.
+8. Collision information.
+9. Quit
+```
+__Notes__
++ The program will not let you fill the table unless you have created a new empty table. (So if you'd like to create a new hash table to read in a different file, you must first go through 1 before you can access 2. 
++ 3 verifies that a course exists and prints out all the times it has been offered and by which instructor.
++ 4 prints out all the courses in the order they exist in the hash table.
++ 5 generates two lists. One has courses only offered in the fall, and the other courses that are only offered in the spring.
++ for 6 and 7, courses that are only offered in one semester are excluded.
++ 8 provides information on the collisions in the hash table and how the courses are spread out across the indices. You can generate hashtables of different sizes and compare what values minimize collisions while not wasting space. 
+
+
 ######Dependencies
 None. 
 ######System	Requirements
