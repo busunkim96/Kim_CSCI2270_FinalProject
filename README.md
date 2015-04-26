@@ -9,6 +9,7 @@ Using codeblocks should be the easiest way. Otherwise, you will need to have:
 The csv file must be formatted __exactly__ like the two examples provided. (courseList.csv and appm.csv)
 The columns from YearTerm to insname1 should be included, and there must be nothing after the final cell with data.
 You can create files for different deparments by downloading [this file]("http://www.colorado.edu/pba/course/IGroup.xlsx"), navigating to the "data" tab, and filtering for one department. Then copy the data (including the column headers) from YearTerm to insname1, paste it into a different excel file, and save it as a .csv file. 
+
 ######Dependencies
 None. 
 ######System	Requirements
