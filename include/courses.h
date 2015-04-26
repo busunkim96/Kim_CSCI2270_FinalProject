@@ -21,8 +21,8 @@ struct Section{//a section is a single instance of a Course (e.g.,
 struct Course{
     std::string courseName;//the course name (most recent version overrides if different)
     int courseValue;//the course number (e.g., 2270)
-    std::vector<Section*> offeredFall;//years offered in fall
-    std::vector<Section*> offeredSpring;//years offered in spring
+    std::vector<Section> offeredFall;//years offered in fall
+    std::vector<Section> offeredSpring;//years offered in spring
     Course *next = NULL;
 
     Course(){};
@@ -36,20 +36,25 @@ struct Course{
 class courses
 {
     public:
-        courses(std::string csvFileName, int hashArraySize);
+        courses();
         virtual ~courses();
         void fillTable(std::string csvFileName);
         void makeEmptyTable(int tableSize);
         void findCoursePublic(int courseNum);
         void printAllCourses();
-        Course* findCourse(int courseNumber);//returns pointer to course if found, else returns null
+        void printMoreFall();
+        void printMoreSpring();
+        void printOnlyFall();
+        void printOnlySpring();
+        void countCollisions();
     protected:
     private:
-        int hashTableSize;
+        int hashTableSize=0;
         bool hashTableMade; //changes to true once hash table exists
         Course **coursesHashTable;
         int makeHashSum(int courseNum);
         void insertNewCourse(int index, Course *newCourse);
+        Course* findCourse(int courseNumber);//returns pointer to course if found, else returns null
 
 };
 

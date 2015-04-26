@@ -1,14 +1,29 @@
 #include "courses.h"
 
-courses::courses(std::string csvFileName, int hashArraySize)
+courses::courses()
 {
-    makeEmptyTable(15);
-    fillTable(csvFileName);
-    hashTableMade = true;
+
 }
 
 courses::~courses()
 {
+    for (int i = 0; i < hashTableSize; i++){
+        Course *thisCourse = coursesHashTable[i];
+
+        while(thisCourse->next != NULL){
+                Course *temp = thisCourse->next;
+                thisCourse->offeredFall.clear();
+                thisCourse->offeredSpring.clear();
+                delete thisCourse;
+                thisCourse = temp;
+        }
+        thisCourse->offeredFall.clear();
+                thisCourse->offeredSpring.clear();
+                delete thisCourse;
+    }
+
+    delete[] coursesHashTable;
+
     //dtor
 }
 /**makeEmptyTable(int tableSize)
@@ -19,8 +34,10 @@ courses::~courses()
 *   Post: An empty hash table is created ready to be populated with the appropriate values with the fillTable function.
 */
 void courses::makeEmptyTable(int tableSize){
-    coursesHashTable = new Course*[tableSize];//new hashtable of specified size
+    Course **hashTable = new Course*[tableSize];//new hashtable of specified size
+    coursesHashTable = hashTable;
     hashTableSize = tableSize;
+    hashTableMade = true;
     for(int i = 0; i < hashTableSize; i++){//populating hashtable with blank course entries
         Course *newCourse = new Course;
         newCourse->courseName = "";
@@ -38,19 +55,22 @@ void courses::makeEmptyTable(int tableSize){
 *   Post: A searchable hash table with course information will be constructed.
 **/
 void courses::fillTable(std::string csvFileName){
-std::string line;//stores each line of the csv file with individual course information
+    std::string line;//stores each line of the csv file with individual course information
     std::string discardedValue, yearTerm, yearSubString, termSubString, courseNumberString, courseName, instructorName;
     int year, term, courseNumber, hashedCourseNum;
 
     std::ifstream courseFile(csvFileName);
     if(courseFile.is_open()){
+        std::cout<<csvFileName << " successfully opened." <<std::endl;
         getline(courseFile, line);//this discards the header line
 
-        while(getline(courseFile, line) && line != ""){
+        while(getline(courseFile, line) && line != " "){
             std::stringstream inLine(line);
             getline(inLine, yearTerm, ',');//yearTerm is of the form [year][1 or 7] (e.g., 20107) The last digit indicates the term. 1 is Fall, 7 is Spring
+            //std::cout<<yearTerm << std::endl;
             yearSubString = yearTerm.substr(0,4);
             termSubString = yearTerm.substr(4,1);
+            //std::cout<<yearSubString<<std::endl;
             year = stoi(yearSubString);
             term = stoi(termSubString);
 
@@ -74,45 +94,49 @@ std::string line;//stores each line of the csv file with individual course infor
 
             //END OF DATA EXTRACTION OF FILE. REST OF FUNCTION IS ADDING/UPDATING HASH TABLE
             Course *sameCourse = findCourse(courseNumber);//search hash table for same course number
-            Section *newSection = new Section;
-            newSection->instructor = instructorName;
-            newSection->year = year;
+            Section newSection;
+            newSection.instructor = instructorName;
+            newSection.year = year;
 
             if(sameCourse == NULL){//course does not yet exist in hash table
                 Course *newCourse = new Course;
                 newCourse->courseName = courseName;
                 newCourse->courseValue = courseNumber;
-
+                newCourse->next = NULL;
                 if(term == 1){
-                    newCourse->offeredFall.push_back(newSection);
+                    newCourse->offeredSpring.push_back(newSection);
                 }
                 else{
-                    newCourse->offeredSpring.push_back(newSection);
+                    newCourse->offeredFall.push_back(newSection);
                 }
                 int index = makeHashSum(courseNumber);
                 insertNewCourse(index, newCourse);
 
             }
             else{//course exists in hashTable, so update
-                if(sameCourse->courseName != courseName)
+                //if(sameCourse->courseName != courseName)
                     sameCourse->courseName == courseName;
                 if(term == 1){
-                    sameCourse->offeredFall.push_back(newSection);
+                    sameCourse->offeredSpring.push_back(newSection);
                 }
                 else{
-                    sameCourse->offeredSpring.push_back(newSection);
+                    sameCourse->offeredFall.push_back(newSection);
                 }
             }
 
         }
-
-    }
     courseFile.close();
+    }
+    else{
+        std::cout<<"File not found!" <<std::endl;
+    }
+
 }
 
 void courses::insertNewCourse(int index, Course *newCourse){
 
     if(coursesHashTable[index]->courseValue == -1){//if no courses yet have this hash value
+        delete coursesHashTable[index];
         coursesHashTable[index] = newCourse;
     }
     else{
@@ -132,6 +156,7 @@ void courses::insertNewCourse(int index, Course *newCourse){
             }
             else if (thisCourse->next == NULL && thisCourse->courseValue < newCourse->courseValue){//insertion at end
                 thisCourse->next = newCourse;
+                newCourse->next = NULL;
                 foundPlace = true;
             }
             else{
@@ -143,35 +168,116 @@ void courses::insertNewCourse(int index, Course *newCourse){
 
     }
 }
-
+/**int makeHashSum(int courseNum)
+*   This function takes the course number and mods it by the hash table size to produce a hash number.
+*   Parameters:
+*       + int courseNum
+*   Pre: A hash table size and a course number must exist before this function can be used.
+*   Post: The int value returned will be the hash value for the course number.
+*/
 int courses::makeHashSum(int courseNum){
     int hashSum = courseNum%hashTableSize;
     return hashSum;
 }
 
-void courses::printAllCourses(){
-for (int i = 0; i < hashTableSize; i++){
+void courses::printOnlyFall(){
+    std::cout<<"These courses are only offered in the fall" <<std::endl;
+    for (int i = 0; i < hashTableSize; i++){
+        Course *thisCourse = coursesHashTable[i];
+        if(thisCourse->courseValue != -1){
+            while(thisCourse->next != NULL){
+                    if(thisCourse->offeredSpring.size() ==0)
+                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << std::endl;
+                    thisCourse = thisCourse->next;
+            }
+            if(thisCourse->offeredSpring.size() ==0)
+                std::cout<<thisCourse->courseValue << ":" << thisCourse->courseName <<std::endl;//print last
+        }
+    }
+    std::cout<<std::endl;
+}
+
+void courses::printOnlySpring(){
+    std::cout<<"These courses are only offered in the spring" <<std::endl;
+    for (int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
 
         if(thisCourse->courseValue != -1){
-        while(thisCourse->next != NULL){
-                if(thisCourse->courseValue != -1)
-                int totalTimesOffered = thisCourse->offeredFall.size() + thisCourse->offeredSpring.size();
-                float ratio;
-                std::string offeredMoreOften = (thisCourse->offeredFall.size() > thisCourse->offeredSpring.size())?"Fall":"Spring";
-                if(offeredMoreOften == "Spring"){
-                    ratio = float(thisCourse->offeredSpring.size())/float(thisCourse->offeredFall.size());
-                }
-                else{
-                    ratio = float(thisCourse->offeredFall.size())/float(thisCourse->offeredSpring.size());
-                }
+            while(thisCourse->next != NULL){
+                    if(thisCourse->offeredFall.size() ==0)
+                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << std::endl;
+                    thisCourse = thisCourse->next;
+            }
+            if(thisCourse->offeredFall.size() ==0)
+                std::cout<<thisCourse->courseValue << ":" << thisCourse->courseName<< std::endl;//print last
+            }
+    }
+    std::cout<<std::endl;
+}
 
-                std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the " << offeredMoreOften << std::endl;
-            thisCourse = thisCourse->next;
+void courses::printMoreFall(){
+    float ratio;
+    for (int i = 0; i < hashTableSize; i++){
+        Course *thisCourse = coursesHashTable[i];
+
+        if(thisCourse->courseValue != -1){
+            while(thisCourse->next != NULL){
+                    if(thisCourse->courseValue != -1 &&thisCourse->offeredSpring.size()!=0)//if the size of the spring vector is 0, the course is only offered in the fall, and that value is excluded
+                    ratio = float(thisCourse->offeredFall.size())/float(thisCourse->offeredSpring.size());
+                    if(ratio>1){
+                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the Fall" << std::endl;
+                    }
+                    thisCourse = thisCourse->next;
+
+                    if(ratio>1){
+                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the Fall" << std::endl;
+                    }
+                }
         }
-        std::cout<<thisCourse->courseValue << ":" << thisCourse->courseName<< ":"<<thisCourse->courseValue%hashTableSize << std::endl;//print last
+
     }
+    std::cout<<std::endl;
+}
+
+void courses::printMoreSpring(){
+    float ratio;
+    for (int i = 0; i < hashTableSize; i++){
+        Course *thisCourse = coursesHashTable[i];
+
+        if(thisCourse->courseValue != -1){
+            while(thisCourse->next != NULL){
+                    if(thisCourse->courseValue != -1 &&thisCourse->offeredFall.size()!=0)//if the size of the fall vector is 0, the course is only offered in the fall, and that value is excluded
+                    ratio = float(thisCourse->offeredSpring.size())/float(thisCourse->offeredFall.size());
+                    if(ratio>1){
+                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the Spring." << std::endl;
+                    }
+                    thisCourse = thisCourse->next;
+
+                    if(ratio>1){
+                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the Spring." << std::endl;
+                    }
+                }
+        }
+
     }
+    std::cout<<std::endl;
+}
+void courses::printAllCourses(){
+
+    for (int i = 0; i < hashTableSize; i++){
+        Course *thisCourse = coursesHashTable[i];
+
+        if(thisCourse->courseValue != -1){
+            while(thisCourse->next != NULL){
+
+                    std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << std::endl;
+                    thisCourse = thisCourse->next;
+
+            }
+            std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << std::endl;//print last
+        }
+    }
+
 }
 void courses::findCoursePublic(int courseNum){
 
@@ -180,21 +286,21 @@ void courses::findCoursePublic(int courseNum){
         std::cout<< "Course not found." << std::endl;
     }
     else{
-        std::cout <<"===============================================================================" <<std::endl;
-        std::cout<<foundCourse->courseValue << " "<< foundCourse->courseName << std::endl;
-        std::cout<<"This course has been offered " << foundCourse->offeredFall.size() <<" times in the fall and " << foundCourse->offeredSpring.size() << " times in the spring.\n" <<std::endl;
+        std::cout <<"======"<<foundCourse->courseValue << " "<< foundCourse->courseName<<"======" <<std::endl;
+
+        std::cout<<"This course has been offered:\n +" <<foundCourse->offeredFall.size() <<" times in the fall \n +" << foundCourse->offeredSpring.size() << " times in the spring\n" <<std::endl;
 
         std::cout<<"***Offered in the Fall Semester***" << std::endl;
 
         for(int i = 0; i < foundCourse->offeredFall.size(); i++){
-            std::cout<<foundCourse->offeredFall[i]->year << ": " <<foundCourse->offeredFall[i]->instructor << std::endl;
+            std::cout<<foundCourse->offeredFall[i].year << ": " <<foundCourse->offeredFall[i].instructor << std::endl;
         }
         std::cout << std::endl;
 
         std::cout<<"***Offered in the Spring Semester***" << std::endl;
 
         for(int i = 0; i < foundCourse->offeredSpring.size(); i++){
-            std::cout<<foundCourse->offeredSpring[i]->year <<": " <<foundCourse->offeredSpring[i]->instructor << std::endl;
+            std::cout<<foundCourse->offeredSpring[i].year <<": " <<foundCourse->offeredSpring[i].instructor << std::endl;
         }
 
         std::cout << std::endl;
@@ -223,5 +329,53 @@ Course* courses::findCourse(int courseNum){
         }
     }
     return searchingFor;
+
+}
+
+void courses::countCollisions(){
+    int emptyIndices=0;
+    int onlyOne=0;
+    int collisions=0;
+    int biggestCollision=0;
+
+    for(int i = 0; i < hashTableSize; i++){
+        if(i < 10)
+            std::cout<<0 << i <<":";
+        else
+            std::cout<<i <<":";
+        if(coursesHashTable[i]->courseValue == -1){
+            emptyIndices++;
+        }
+        else{
+            if(coursesHashTable[i]->next == NULL){
+                onlyOne++;
+                std::cout<< "*";
+            }
+            else{
+                collisions++;
+                int numCollided = 1;
+                std::cout<<"*";
+                Course *thisCourse = coursesHashTable[i];
+                while(thisCourse != NULL){
+                    numCollided++;
+                    std::cout<<"*";
+                    thisCourse = thisCourse->next;
+                }
+                if(numCollided > biggestCollision){
+                    biggestCollision = numCollided;
+                }
+
+
+            }
+
+
+        }
+        std::cout<<std::endl;
+    }
+    std::cout<<"You chose a table size of " << hashTableSize << "."<<std::endl;
+    std::cout<<"There are " <<emptyIndices << " empty indices." << std::endl;
+    std::cout<<"There are " << onlyOne << " indices with exactly one course." << std::endl;
+    std::cout<<"There are " << collisions <<" indices with collisions"<< std::endl;
+    std::cout<<"The are " << biggestCollision << " courses in the biggest collision." <<std::endl;
 
 }
