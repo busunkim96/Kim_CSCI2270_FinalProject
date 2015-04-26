@@ -7,29 +7,28 @@ courses::courses()
 
 courses::~courses()
 {
-    for (int i = 0; i < hashTableSize; i++){
+   for(int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
-
-        while(thisCourse->next != NULL){
+        if(thisCourse != NULL){//more than one entry
+            while(thisCourse != NULL){
                 Course *temp = thisCourse->next;
                 thisCourse->offeredFall.clear();
                 thisCourse->offeredSpring.clear();
                 delete thisCourse;
                 thisCourse = temp;
+            }
         }
-        thisCourse->offeredFall.clear();
-                thisCourse->offeredSpring.clear();
-                delete thisCourse;
-    }
+   }
+   delete[] coursesHashTable;
 
-    delete[] coursesHashTable;
-
-    //dtor
 }
-/**makeEmptyTable(int tableSize)
+/** void courses::makeEmptyTable(int tableSize)
 *   This function creates an empty hash table of the size specified in the arguments passed to the constructor.
-*   Parameters:
-*       + int tableSize
+*
+*   Example:
+*   courses example;
+*   courses.makeEmptyTable(15);
+*
 *   Pre: An integer value greater than 0 must be passed to the function.
 *   Post: An empty hash table is created ready to be populated with the appropriate values with the fillTable function.
 */
@@ -39,19 +38,20 @@ void courses::makeEmptyTable(int tableSize){
     hashTableSize = tableSize;
     hashTableMade = true;
     for(int i = 0; i < hashTableSize; i++){//populating hashtable with blank course entries
-        Course *newCourse = new Course;
-        newCourse->courseName = "";
-        newCourse->courseValue = -1;
-        newCourse->next = NULL;
-        coursesHashTable[i] = newCourse;
+        coursesHashTable[i]= NULL;
     }
 }
-/**fillTable(string csvFileName)
-*   The function takes the name of the .csv file as a string and
-*   constructs a hashtable with the course list based on the file.
-*   Parameters:
-*       + string csvFileName
-*   Pre: The function expects one string with the format "fileName.csv"
+/** fillTable(string csvFileName)
+*   The function takes the name of the .csv file as a string and constructs a hash table with the course list based on the file.
+*
+*   Example:
+*   courses example;
+*   example.fillTable("courseList.csv")
+*
+*   Pre: A empty hash table must exist before this function is called. The function expects one string with the format "fileName.csv".
+*   The csv file must have the same format as the example files in the repo. The data file should be filtered to
+*   include the header line and should only have the columns from YearTerm to insname1. The rows after all the course data should be cleared
+*   to make sure there are no empty strings that will result in failure of this function.
 *   Post: A searchable hash table with course information will be constructed.
 **/
 void courses::fillTable(std::string csvFileName){
@@ -61,7 +61,6 @@ void courses::fillTable(std::string csvFileName){
 
     std::ifstream courseFile(csvFileName);
     if(courseFile.is_open()){
-        std::cout<<csvFileName << " successfully opened." <<std::endl;
         getline(courseFile, line);//this discards the header line
 
         while(getline(courseFile, line) && line != " "){
@@ -125,6 +124,7 @@ void courses::fillTable(std::string csvFileName){
             }
 
         }
+    std::cout<<csvFileName << " successfully read." <<std::endl;
     courseFile.close();
     }
     else{
@@ -132,11 +132,20 @@ void courses::fillTable(std::string csvFileName){
     }
 
 }
-
+/**void courses::insertNewCourse(int index, Course *newCourse)
+*   This function places a new course into the appropriate place in the hash table. Courses are first stored based on hash sum. Collisions are stored
+*   in a linked list, with smaller course values preceding larger ones. e.g,(1300, 2270, 3140)
+*
+*   Example:
+*   course newCourse;
+*   insertNewCourse(5, newCourse)
+*
+*   Pre: A hash table must exist, and the appropriate index (hash code) and a pointer to a course object must be passed to the function.
+*   Post: The movie is added to the hash table.
+*/
 void courses::insertNewCourse(int index, Course *newCourse){
 
-    if(coursesHashTable[index]->courseValue == -1){//if no courses yet have this hash value
-        delete coursesHashTable[index];
+    if(coursesHashTable[index]==NULL){//if no courses yet have this hash value
         coursesHashTable[index] = newCourse;
     }
     else{
@@ -159,7 +168,7 @@ void courses::insertNewCourse(int index, Course *newCourse){
                 newCourse->next = NULL;
                 foundPlace = true;
             }
-            else{
+            else{//not at right index, so move forward
                 prev = thisCourse;
                 thisCourse = thisCourse->next;
             }
@@ -168,10 +177,12 @@ void courses::insertNewCourse(int index, Course *newCourse){
 
     }
 }
-/**int makeHashSum(int courseNum)
+/** int courses::makeHashSum(int courseNum)
 *   This function takes the course number and mods it by the hash table size to produce a hash number.
-*   Parameters:
-*       + int courseNum
+*
+*   Example:
+*   makeHashSum(2270)
+*
 *   Pre: A hash table size and a course number must exist before this function can be used.
 *   Post: The int value returned will be the hash value for the course number.
 */
@@ -180,11 +191,21 @@ int courses::makeHashSum(int courseNum){
     return hashSum;
 }
 
+/** void courses::printOnlyFall()
+*   This function prints a list of courses that have only been offered in the fall.
+*
+*   Example:
+*   courses example;
+*   example.printOnlyFall();
+*
+*   Pre: A filled hash table should exist before this function is called.
+*   Post: A list of courses that have only been offered in the fall will be printed.
+*/
 void courses::printOnlyFall(){
     std::cout<<"These courses are only offered in the fall" <<std::endl;
     for (int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
-        if(thisCourse->courseValue != -1){
+        if(thisCourse != NULL){
             while(thisCourse->next != NULL){
                     if(thisCourse->offeredSpring.size() ==0)
                         std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << std::endl;
@@ -196,13 +217,22 @@ void courses::printOnlyFall(){
     }
     std::cout<<std::endl;
 }
-
+/** void courses::printOnlySpring()
+*   This function prints a list of courses that have only been offered in the spring.
+*
+*   Example:
+*   courses example;
+*   example.printOnlySpring();
+*
+*   Pre: A filled hash table should exist before this function is called.
+*   Post: A list of courses that have only been offered in the spring will be printed.
+*/
 void courses::printOnlySpring(){
     std::cout<<"These courses are only offered in the spring" <<std::endl;
     for (int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
 
-        if(thisCourse->courseValue != -1){
+        if(thisCourse != NULL){
             while(thisCourse->next != NULL){
                     if(thisCourse->offeredFall.size() ==0)
                         std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << std::endl;
@@ -214,60 +244,86 @@ void courses::printOnlySpring(){
     }
     std::cout<<std::endl;
 }
-
+/** void courses::printMoreFall()
+*   This function prints a list of courses that are more often offered in the fall. (excludes courses only offered in fall).
+*
+*   Example:
+*   courses example;
+*   example.printMoreFall();
+*
+*   Pre: A filled hash table should exist before this function is called.
+*   Post: A list of courses more often offered in the spring will be printed.
+*/
 void courses::printMoreFall(){
     float ratio;
     for (int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
 
-        if(thisCourse->courseValue != -1){
+        if(thisCourse !=NULL){
             while(thisCourse->next != NULL){
-                    if(thisCourse->courseValue != -1 &&thisCourse->offeredSpring.size()!=0)//if the size of the spring vector is 0, the course is only offered in the fall, and that value is excluded
-                    ratio = float(thisCourse->offeredFall.size())/float(thisCourse->offeredSpring.size());
-                    if(ratio>1){
-                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the Fall" << std::endl;
-                    }
-                    thisCourse = thisCourse->next;
-
-                    if(ratio>1){
-                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the Fall" << std::endl;
-                    }
+                if(thisCourse->offeredSpring.size()!=0)//if the size of the spring vector is 0, the course is only offered in the fall, and that value is excluded
+                ratio = float(thisCourse->offeredFall.size())/float(thisCourse->offeredSpring.size());
+                if(ratio>1){
+                    std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the fall." << std::endl;
                 }
-        }
+                thisCourse = thisCourse->next;
 
+                if(ratio>1){
+                    std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the fall." << std::endl;
+                }
+            }
+        }
     }
     std::cout<<std::endl;
 }
-
+/** void courses::printMoreSpring()
+*   This function prints a list of courses that are more often offered in the spring. (excludes courses only offered in spring).
+*
+*   Example:
+*   courses example;
+*   example.printMoreSpring();
+*
+*   Pre: A filled hash table should exist before this function is called.
+*   Post: A list of courses more often offered in the spring will be printed.
+*/
 void courses::printMoreSpring(){
     float ratio;
     for (int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
 
-        if(thisCourse->courseValue != -1){
+        if(thisCourse !=NULL){
             while(thisCourse->next != NULL){
-                    if(thisCourse->courseValue != -1 &&thisCourse->offeredFall.size()!=0)//if the size of the fall vector is 0, the course is only offered in the fall, and that value is excluded
-                    ratio = float(thisCourse->offeredSpring.size())/float(thisCourse->offeredFall.size());
-                    if(ratio>1){
-                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the Spring." << std::endl;
-                    }
-                    thisCourse = thisCourse->next;
-
-                    if(ratio>1){
-                        std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the Spring." << std::endl;
-                    }
+                if(thisCourse->offeredFall.size()!=0)//if the size of the spring vector is 0, the course is only offered in the fall, and that value is excluded
+                ratio = float(thisCourse->offeredSpring.size())/float(thisCourse->offeredFall.size());
+                if(ratio>1){
+                    std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the spring." << std::endl;
                 }
-        }
+                thisCourse = thisCourse->next;
 
+                if(ratio>1){
+                    std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the spring." << std::endl;
+                }
+            }
+        }
     }
     std::cout<<std::endl;
 }
+/** void courses::printAllCourses()
+*   This function prints all the courses in the order they exist in the hash table.
+*
+*   Example:
+*   courses example;
+*   example.printAllCourses();
+*
+*   Pre: A filled hash table should exist before this function is called.
+*   Post: A list of all courses with the course number and course name will be printed.
+*/
 void courses::printAllCourses(){
 
     for (int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
 
-        if(thisCourse->courseValue != -1){
+        if(thisCourse !=NULL){
             while(thisCourse->next != NULL){
 
                     std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << std::endl;
@@ -279,6 +335,16 @@ void courses::printAllCourses(){
     }
 
 }
+/** void courses::findCoursePublic(int courseNum)
+*   This function finds the course with the specified course number and prints information on the terms it has been offered.
+*
+*   Example:
+*   courses example;
+*   example.findCoursePublic(2270);
+*
+*   Pre: A filled hash table should exist before this function is called.
+*   Post: If the course is found, information on which terms it has been offered and how many times it has been offered will be printed.
+*/
 void courses::findCoursePublic(int courseNum){
 
     Course* foundCourse = findCourse(courseNum);
@@ -307,30 +373,64 @@ void courses::findCoursePublic(int courseNum){
     }
 
 }
-
+/** Course* courses::findCourse(int courseNum)
+*   This function finds the course with the course number passed to the function.
+*
+*   Example:
+*   Course* dataStructures = findCourse(2270);
+*
+*   Pre: A filled hash table should exist before this function is called.
+*   Post: A pointer to the course with the specified course number will be returned if the course exists. Otherwise NULL will be returned.
+*/
 Course* courses::findCourse(int courseNum){
     int hashTableIndex = makeHashSum(courseNum);
 
     Course *searchingFor = NULL;
 
     Course *thisCourse = coursesHashTable[hashTableIndex];
-    if(thisCourse->courseValue == courseNum){//head of linked list is value
-        searchingFor = thisCourse;
+    if(thisCourse == NULL){//nothing at the hash index
+        searchingFor = NULL;
     }
     else{
-        bool found = false;
+        if(thisCourse->courseValue == courseNum){//head of linked list is value
+            searchingFor = thisCourse;
+        }
+        else{
+            bool found = false;
 
-        while(thisCourse != NULL && found ==false){//search through linked list until found or reach NULL node
-            thisCourse = thisCourse->next;
-            if(thisCourse != NULL && thisCourse->courseValue == courseNum){
-                searchingFor = thisCourse;
-                found = true;
+            while(thisCourse != NULL && found ==false){//search through linked list until found or reach NULL node
+                thisCourse = thisCourse->next;
+                if(thisCourse != NULL && thisCourse->courseValue == courseNum){
+                    searchingFor = thisCourse;
+                    found = true;
+                }
             }
         }
     }
     return searchingFor;
 
 }
+/** void courses::countCollisions()
+*   This function returns information about the collisions in the hash table.
+*
+*   Example:
+*   courses example;
+*   example.countCollisions();
+*
+*   Pre: A filled hash table should exist before this function is called.
+*   Post: Information on the collisions in the table will be returned along with a histogram with information on
+*   the spread of the courses throughout the hash table.(Example below)
+*
+*   01:*
+*   02:**
+*   03:
+*   04:***
+*   You chose a table size of 4.
+*   There are 1 blank indices.
+*   There are 2 indices with exactly one course.
+*   There are 2 indices with collisions.
+*   There are 3 courses in the biggest collision.
+*/
 
 void courses::countCollisions(){
     int emptyIndices=0;
@@ -343,7 +443,7 @@ void courses::countCollisions(){
             std::cout<<0 << i <<":";
         else
             std::cout<<i <<":";
-        if(coursesHashTable[i]->courseValue == -1){
+        if(coursesHashTable[i] == NULL){
             emptyIndices++;
         }
         else{

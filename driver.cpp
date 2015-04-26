@@ -6,12 +6,13 @@ int main()
 {
     courses test = courses();
     string comm = "go";
-    string strArraySize, strCourseNum;
-    string fileName;
+    string strArraySize, strCourseNum, fileName;
     bool hashTableMade = false;
-    int arraySize, courseNum;
+    int arraySize = 0, courseNum;
     int choice = -1;
-    while(comm != "quit" && comm != "1" && comm != "2" && comm != "3" && comm != "4" && comm !="5" && comm !="6" && comm != "7" && comm != "8" && comm !="9"){
+    while(comm != "quit" && comm != "1" && comm != "2" && comm != "3"
+          && comm != "4" && comm !="5" && comm !="6" && comm != "7"
+          && comm != "8" && comm !="9"){
         cout<<"======Main Menu======\n1. Create an empty table.\n"
         "2. Fill the table.\n3. Find a course.\n4. Print all courses.\n"
         "5. Print courses only offered one semester.\n6. Print courses more often offered in Fall.\n"
@@ -22,22 +23,21 @@ int main()
         }
         else{
 
-        choice = stoi(comm);
-        switch(choice){
-        case 1:
-            try{
-                while(arraySize <= 0){
-                    cout<<"Please provide an integer hash table greater than 0:";
-                    getline(cin, strArraySize);
-                    arraySize = stoi(strArraySize);
-                }
-                cout<<"Empty hash table of size " << arraySize<<" built."<<endl;
-                if(hashTableMade){
-                    test.~courses();
-                }
-                test.makeEmptyTable(arraySize);
-                hashTableMade = true;
-
+            choice = stoi(comm);
+            switch(choice){
+            case 1:
+                try{
+                    while(arraySize <= 0){
+                        cout<<"Please provide an integer hash table size greater than 0:";
+                        getline(cin, strArraySize);
+                        arraySize = stoi(strArraySize);
+                    }
+                    if(hashTableMade){
+                        test.~courses();//destructor not being called?
+                    }
+                    test.makeEmptyTable(arraySize);
+                    hashTableMade = true;
+                    cout<<"Empty hash table of size " << arraySize<<" built."<<endl;
             }
             catch(exception invalid_argument){
                 cout<<"Please provide an integer greater than 0."<<endl;
@@ -46,9 +46,15 @@ int main()
             comm = -1;
             break;
         case 2:
-            cout<<"Enter a csv file name (e.g., ""math.csv""): ";
-            getline(cin, fileName);
-            test.fillTable(fileName);
+            if(hashTableMade){
+                cout<<"Enter a csv file name (e.g., ""math.csv""): ";
+                getline(cin, fileName);
+                test.fillTable(fileName);
+                hashTableMade = false;
+            }
+            else{
+                cout<<"Please create a new hash table." <<endl;
+            }
             comm = -1;
             break;
         case 3:
@@ -82,7 +88,6 @@ int main()
         case 7:
             test.printMoreSpring();
             comm = -1;
-
             break;
         case 8:
             test.countCollisions();
@@ -90,7 +95,6 @@ int main()
             break;
         case 9:
             comm = "quit";
-            //test.~courses();
             cout<< "Goodbye!"<< endl;
             break;
             }

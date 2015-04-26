@@ -7,7 +7,7 @@
 #include <sstream>
 #include <vector>
 
-struct Section{//a section is a single instance of a Course (e.g.,
+struct Section{//a section is a single instance of a Course (e.g., The Spring 2015 section of CSCI 2270).
     std::string instructor;
     int year;
     Section(){};
