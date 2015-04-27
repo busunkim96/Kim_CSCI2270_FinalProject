@@ -60,14 +60,14 @@ None.
 Make sure you're using C++11.
 ######Contributors
 
+
 ######Open	issues/bugs
 
 __Issues__
-
-1. If the user tries to make a new hash table after already having created and populated one, the program behaves correctly, but it looks like the destructor might not be properly called (to destroy the original hash table before creating a new one).
-2. The course name is not updating to the most recent version. For example, if in 2006 CSCI 2270 had a course name "DATA STRUCTURES" it does not change even if it was called "Data Structures" in 2013.
+1. The course name is not updating to the most recent version. For example, if in 2006 CSCI 2270 had a course name "DATA STRUCTURES" it does not change even if it was called "Data Structures" in 2013.
 
 __Enhancements__
 
-1. Expand so multiple deparmtents can be handled.
-2. Add the average GPA info from the excel file to the "section" object. 
+1. Expand so multiple deparmtents can be handled in one instance.
+2. Add the average GPA info from the excel file to the "section" object. (or other data from file)
+3. Keep counts of how many times each instructor has taught a single class.
