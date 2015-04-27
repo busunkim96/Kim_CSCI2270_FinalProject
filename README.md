@@ -31,7 +31,23 @@ __Notes__
 + The program will not let you fill the table unless you have created a new empty table. (So if you'd like to create a new hash table to read in a different file, you must first go through 1 before you can access 2. 
 + 1 asks for the size of the hash table and constructs an empty hash table
 + 2 asks for the name of a csv file. 2 are provided in this repo. courseList.csv has CSCI courses, and appm.csv has APPM courses.
-+ 3 verifies that a course exists and prints out all the times it has been offered and by which instructor.
++ 3 verifies that a course exists and prints out all the times it has been offered and by which instructor. The summary is in the following format.
+```
+======4580 STAT APPLIC SOFTWRE METH======
+This course has been offered:
+ +0 times in the fall
+ +6 times in the spring
+
+***Offered in the Fall Semester***
+
+***Offered in the Spring Semester***
+2007: LUFTIG, JEFFREY TRUET
+2008: LUFTIG, JEFFREY TRUET
+2009: OUELLETTE, STEVEN M
+2010: LUFTIG, JEFFREY TRUET
+2011: LUFTIG, JEFFREY TRUET
+2012: LUFTIG, JEFFREY 
+```
 + 4 prints out all the courses in the order they exist in the hash table.
 + 5 generates two lists. One has courses only offered in the fall, and the other courses that are only offered in the spring.
 + for 6 and 7, courses that are only offered in one semester are excluded.
