@@ -52,7 +52,24 @@ This course has been offered:
 + 5 generates two lists. One has courses only offered in the fall, and the other courses that are only offered in the spring.
 + for 6 and 7, courses that are only offered in one semester are excluded.
 + 8 provides information on the collisions in the hash table and how the courses are spread out across the indices. You can generate hashtables of different sizes and compare what values minimize collisions while not wasting space. 
-
+```
+00:*********
+01:**********
+02:*****
+03:*******
+04:********
+05:*******
+06:*********
+07:********
+08:*******
+09:**********
+10:******
+You chose a table size of 11.
+There are 0 empty indices.
+There are 0 indices with exactly one course.
+There are 11 indices with collisions
+The are 10 courses in the biggest collision.
+```
 
 ######Dependencies
 None. 
