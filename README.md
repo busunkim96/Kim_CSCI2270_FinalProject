@@ -64,6 +64,7 @@ Make sure you're using C++11.
 ######Open	issues/bugs
 
 __Issues__
+
 1. The course name is not updating to the most recent version. For example, if in 2006 CSCI 2270 had a course name "DATA STRUCTURES" it does not change even if it was called "Data Structures" in 2013.
 
 __Enhancements__
