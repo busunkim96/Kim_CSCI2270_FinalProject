@@ -7,7 +7,7 @@ Opening the codeblocks project should be the easiest way. I've also added the ex
   1. courses.h, course.cpp, driver.cpp 
   2. At least one csv file with course information in the same location as the driver.cpp file.
 The csv file must be formatted like the two examples provided. (courseList.csv and appm.csv). You can create files for different deparments by following the steps below.
-    - download [this excel file]("http://www.colorado.edu/pba/course/IGroup.xlsx")
+    - download [this excel file](http://www.colorado.edu/pba/course/IGroup.xlsx)
     - go to the "data" tab
     - filter for one department(e.g., "APPM", "CSCI", "COEN", "MATH")
     - copy the data (including the column headers) from YearTerm to insname1
