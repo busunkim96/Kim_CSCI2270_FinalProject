@@ -7,7 +7,6 @@ int main()
     courses test = courses();
     string comm = "go";
     string strArraySize, strCourseNum, fileName;
-    bool hashTableMade = false;
     int arraySize = 0, courseNum;
     int choice = -1;
     while(comm != "quit" && comm != "1" && comm != "2" && comm != "3"
@@ -28,15 +27,15 @@ int main()
             case 1:
                 try{
                     while(arraySize <= 0){
-                        cout<<"Please provide an integer hash table size greater than 0:";
+                        cout<<"Please provide an integer hash table size greater than 0: ";
                         getline(cin, strArraySize);
                         arraySize = stoi(strArraySize);
                     }
-                    if(hashTableMade){
-                        test.~courses();//destructor not being called?
+                    if(test.hashTableMade){
+                        test.deleteHash();//to delete previously existing hash table
+                        cout<<"Existing hash table deleted." <<endl;
                     }
                     test.makeEmptyTable(arraySize);
-                    hashTableMade = true;
                     cout<<"Empty hash table of size " << arraySize<<" built."<<endl;
             }
             catch(exception invalid_argument){
@@ -46,11 +45,10 @@ int main()
             comm = -1;
             break;
         case 2:
-            if(hashTableMade){
-                cout<<"Enter a csv file name (e.g., ""math.csv""): ";
+            if(test.hashTableMade && test.hashTableEmpty){
+                cout<<"Enter a csv file name (e.g., ""appm.csv"", ""courseList.csv""): ";
                 getline(cin, fileName);
                 test.fillTable(fileName);
-                hashTableMade = false;
             }
             else{
                 cout<<"Please create a new hash table." <<endl;

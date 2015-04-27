@@ -2,12 +2,25 @@
 
 courses::courses()
 {
-
+    hashTableMade = false;
 }
-
 courses::~courses()
 {
-   for(int i = 0; i < hashTableSize; i++){
+   deleteHash();
+
+}
+/** void courses::deleteHash()
+*   This function destroys the elements in the hash table and the hash table itself.
+*
+*   Example:
+*   courses example;
+*   courses.deleteHash();
+*
+*   Pre: A hash table (empty or filled) should exist before this function is called.
+*   Post: The existing hash table is deleted and the memory freed.
+*/
+void courses::deleteHash(){
+     for(int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
         if(thisCourse != NULL){//more than one entry
             while(thisCourse != NULL){
@@ -20,7 +33,6 @@ courses::~courses()
         }
    }
    delete[] coursesHashTable;
-
 }
 /** void courses::makeEmptyTable(int tableSize)
 *   This function creates an empty hash table of the size specified in the arguments passed to the constructor.
@@ -36,10 +48,12 @@ void courses::makeEmptyTable(int tableSize){
     Course **hashTable = new Course*[tableSize];//new hashtable of specified size
     coursesHashTable = hashTable;
     hashTableSize = tableSize;
-    hashTableMade = true;
+
     for(int i = 0; i < hashTableSize; i++){//populating hashtable with blank course entries
         coursesHashTable[i]= NULL;
     }
+    hashTableMade = true;
+    hashTableEmpty = true;
 }
 /** fillTable(string csvFileName)
 *   The function takes the name of the .csv file as a string and constructs a hash table with the course list based on the file.
@@ -126,6 +140,7 @@ void courses::fillTable(std::string csvFileName){
         }
     std::cout<<csvFileName << " successfully read." <<std::endl;
     courseFile.close();
+    hashTableEmpty = false;
     }
     else{
         std::cout<<"File not found!" <<std::endl;
@@ -258,23 +273,18 @@ void courses::printMoreFall(){
     float ratio;
     for (int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
-
-        if(thisCourse !=NULL){
-            while(thisCourse->next != NULL){
-                if(thisCourse->offeredSpring.size()!=0)//if the size of the spring vector is 0, the course is only offered in the fall, and that value is excluded
+        while(thisCourse != NULL){
+            if(thisCourse->offeredSpring.size()!=0){//if the size of the spring vector is 0, the course is only offered in the fall, and that value is excluded
                 ratio = float(thisCourse->offeredFall.size())/float(thisCourse->offeredSpring.size());
                 if(ratio>1){
                     std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the fall." << std::endl;
                 }
-                thisCourse = thisCourse->next;
-
-                if(ratio>1){
-                    std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the fall." << std::endl;
-                }
             }
+            thisCourse = thisCourse->next;
         }
     }
-    std::cout<<std::endl;
+
+    std::cout<<"end"<<std::endl;
 }
 /** void courses::printMoreSpring()
 *   This function prints a list of courses that are more often offered in the spring. (excludes courses only offered in spring).
@@ -290,21 +300,17 @@ void courses::printMoreSpring(){
     float ratio;
     for (int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
-
-        if(thisCourse !=NULL){
-            while(thisCourse->next != NULL){
-                if(thisCourse->offeredFall.size()!=0)//if the size of the spring vector is 0, the course is only offered in the fall, and that value is excluded
+        while(thisCourse != NULL){
+            if(thisCourse->offeredFall.size()!=0){//if the size of the spring vector is 0, the course is only offered in the fall, and that value is excluded
                 ratio = float(thisCourse->offeredSpring.size())/float(thisCourse->offeredFall.size());
                 if(ratio>1){
                     std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the spring." << std::endl;
                 }
-                thisCourse = thisCourse->next;
-
-                if(ratio>1){
-                    std::cout << thisCourse->courseValue << ":" << thisCourse->courseName  << " is offered " << ratio << " times more often in the spring." << std::endl;
-                }
             }
+
+            thisCourse = thisCourse->next;
         }
+
     }
     std::cout<<std::endl;
 }

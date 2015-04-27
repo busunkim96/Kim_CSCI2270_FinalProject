@@ -38,6 +38,7 @@ class courses
     public:
         courses();
         virtual ~courses();
+        void deleteHash();
         void fillTable(std::string csvFileName);
         void makeEmptyTable(int tableSize);
         void findCoursePublic(int courseNum);
@@ -47,10 +48,12 @@ class courses
         void printOnlyFall();
         void printOnlySpring();
         void countCollisions();
+
+        bool hashTableEmpty;//probably should be changed to private with getter
+        bool hashTableMade;//same for this
     protected:
     private:
         int hashTableSize=0;
-        bool hashTableMade; //changes to true once hash table exists
         Course **coursesHashTable;
         int makeHashSum(int courseNum);
         void insertNewCourse(int index, Course *newCourse);
