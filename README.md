@@ -3,9 +3,10 @@
 This project uses information obtained on CU Boulder courses from Fall 2006 - Fall 2014 provided by the [Office of Planning, Budget, and Analysis](http://www.colorado.edu/pba/course/). A csv file with courses from one department is passed to the program. Each unique course is stored in a hashtable using a hashSum function on the course number (e.g., 2270). Each course has information on which terms it has been offered and by which instructor. There are functions to search for individual courses as well as to list courses that are only offered one semester or are offered more often in either semester. There is also a function to generate a histogram on the number of courses in each index in the array. 
 
 ######How to Run:
-Opening the codeblocks project should be the easiest way. I've also added the executable. Otherwise, you will need to have:
+I've added the executable and the code blocks project file. Otherwise, you will need to have:
   1. courses.h, course.cpp, driver.cpp 
-  2. At least one csv file with course information in the same location as the driver.cpp file.
+  2. At least one csv file with course information in the same location as the driver.cpp file. (appm.csv, chem.csv, courseList.csv) 
+
 The csv file must be formatted like the two examples provided. (courseList.csv and appm.csv). You can create files for different deparments by following the steps below.
     - open [gradesall.xlsm](https://github.com/busunkim96/Kim_CSCI2270_FinalProject/blob/master/gradesall.xlsm)
     - go to the "data" tab
@@ -52,7 +53,24 @@ This course has been offered:
 + 5 generates two lists. One has courses only offered in the fall, and the other courses that are only offered in the spring.
 + for 6 and 7, courses that are only offered in one semester are excluded.
 + 8 provides information on the collisions in the hash table and how the courses are spread out across the indices. You can generate hashtables of different sizes and compare what values minimize collisions while not wasting space. 
-
+```
+00:*********
+01:**********
+02:*****
+03:*******
+04:********
+05:*******
+06:*********
+07:********
+08:*******
+09:**********
+10:******
+You chose a table size of 11.
+There are 0 empty indices.
+There are 0 indices with exactly one course.
+There are 11 indices with collisions
+The are 10 courses in the biggest collision.
+```
 
 ######Dependencies
 None. 
