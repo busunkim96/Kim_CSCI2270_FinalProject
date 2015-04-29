@@ -6,7 +6,8 @@ courses::courses()
 }
 courses::~courses()
 {
-   deleteHash();
+    if(hashTableMade)
+        deleteHash();
 
 }
 /** void courses::deleteHash()
@@ -70,7 +71,7 @@ void courses::makeEmptyTable(int tableSize){
 **/
 void courses::fillTable(std::string csvFileName){
     std::string line;//stores each line of the csv file with individual course information
-    std::string discardedValue, yearTerm, yearSubString, termSubString, courseNumberString, courseName, instructorName;
+    std::string discardedValue, yearTerm, yearSubString, termSubString, dept, courseNumberString, courseName, instructorName;
     int year, term, courseNumber, hashedCourseNum;
 
     std::ifstream courseFile(csvFileName);
@@ -86,9 +87,9 @@ void courses::fillTable(std::string csvFileName){
             //std::cout<<yearSubString<<std::endl;
             year = stoi(yearSubString);
             term = stoi(termSubString);
-
-            //four more discarded terms: ,CSCI, EN, ,CSCI
-            for(int j = 0; j < 4; j++){
+            getline(inLine, dept, ',');
+            //two more discarded terms:  EN, ,CSCI
+            for(int j = 0; j < 3; j++){
                 getline(inLine,discardedValue, ',');
 
             }
@@ -105,7 +106,7 @@ void courses::fillTable(std::string csvFileName){
             getline(inLine, discardedValue, '"');//to discard leading quotation mark around instructor name (e.g., "HOENIGMAN, RHONDA OLCOTT" --> HOENIGMNA< RHONDA OLCOTT)
             getline(inLine, instructorName, '"');
 
-            //END OF DATA EXTRACTION OF FILE. REST OF FUNCTION IS ADDING/UPDATING HASH TABLE
+            //END OF DATA EXTRACTION OF FILE. REST OF FUNCTION IS ADDING TO/UPDATING HASH TABLE
             Course *sameCourse = findCourse(courseNumber);//search hash table for same course number
             Section newSection;
             newSection.instructor = instructorName;
@@ -127,8 +128,9 @@ void courses::fillTable(std::string csvFileName){
 
             }
             else{//course exists in hashTable, so update
-                //if(sameCourse->courseName != courseName)
-                    sameCourse->courseName == courseName;
+                if(sameCourse->courseName != courseName){
+                    sameCourse->courseName = courseName;
+                }
                 if(term == 1){
                     sameCourse->offeredSpring.push_back(newSection);
                 }
@@ -471,10 +473,7 @@ void courses::countCollisions(){
                     biggestCollision = numCollided;
                 }
 
-
             }
-
-
         }
         std::cout<<std::endl;
     }
