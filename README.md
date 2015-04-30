@@ -77,7 +77,7 @@ None.
 ######System	Requirements
 Make sure you're using C++11.
 ######Contributors
-
++Brandon Spitler
 
 ######Open	issues/bugs
 
