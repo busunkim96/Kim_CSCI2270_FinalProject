@@ -167,7 +167,7 @@ void courses::insertNewCourse(int index, Course *newCourse){
     }
     else{
         Course *thisCourse = coursesHashTable[index];
-        Course *prev;
+        Course *prev=NULL;
         bool foundPlace = false;
         while(thisCourse!=NULL && foundPlace == false){//find appropriate place to put in ordered linked list from smaller to larger course numbers
             if(prev != NULL && thisCourse->courseValue > newCourse->courseValue ){//insertion in middle
