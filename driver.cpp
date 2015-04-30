@@ -5,6 +5,7 @@ using namespace std;
 int main()
 {
     courses test = courses();
+    bool deleteTable = false;
     string comm = "go";
     string strArraySize, strCourseNum, fileName;
     int arraySize = 0, courseNum;
@@ -32,7 +33,8 @@ int main()
                         arraySize = stoi(strArraySize);
                     }
                     if(test.hashTableMade){
-                        test.deleteHash();//to delete previously existing hash table
+                        deleteTable = true;
+                        test.deleteHash(deleteTable);//delete previously existing hash table and its elements
                         cout<<"Existing hash table deleted." <<endl;
                     }
                     test.makeEmptyTable(arraySize);
@@ -46,6 +48,10 @@ int main()
             break;
         case 2:
             if(test.hashTableMade){
+                if(!test.hashTableEmpty){//if there are elements in the hash table and user wants to fill with different values
+                    deleteTable = false;
+                    test.deleteHash(deleteTable);//only delete hash table elements, not table itself
+                }
                 cout<<"Enter a csv file name (e.g., ""appm.csv"", ""courseList.csv""): ";
                 getline(cin, fileName);
                 test.fillTable(fileName);

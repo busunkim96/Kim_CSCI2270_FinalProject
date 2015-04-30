@@ -38,7 +38,7 @@ class courses
     public:
         courses();
         virtual ~courses();
-        void deleteHash();
+        void deleteHash(bool deleteTable);
         void fillTable(std::string csvFileName);
         void makeEmptyTable(int tableSize);
         void findCoursePublic(int courseNum);

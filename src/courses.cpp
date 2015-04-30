@@ -6,21 +6,24 @@ courses::courses()
 }
 courses::~courses()
 {
-    if(hashTableMade)
-        deleteHash();
+    if(hashTableMade){
+        bool deleteTable = true;
+        deleteHash(deleteTable);
+    }
+
 
 }
-/** void courses::deleteHash()
-*   This function destroys the elements in the hash table and the hash table itself.
+/** void courses::deleteHash(bool deleteTable)
+*   This function destroys the elements in the hash table. If deleteTable is true, it also destroys the hash table itself.
 *
 *   Example:
 *   courses example;
-*   courses.deleteHash();
+*   courses.deleteHash(true);
 *
 *   Pre: A hash table (empty or filled) should exist before this function is called.
-*   Post: The existing hash table is deleted and the memory freed.
+*   Post: If deleteTable is true, the entire table and the elements in it are destroyed. Otherwise, only the table elements are deleted.
 */
-void courses::deleteHash(){
+void courses::deleteHash(bool deleteTable){
      for(int i = 0; i < hashTableSize; i++){
         Course *thisCourse = coursesHashTable[i];
         if(thisCourse != NULL){//more than one entry
@@ -32,8 +35,10 @@ void courses::deleteHash(){
                 thisCourse = temp;
             }
         }
+        coursesHashTable[i] = NULL;//set each hash table index to null
    }
-   delete[] coursesHashTable;
+   if(deleteTable)//if call to function requested that hash table be deleted
+        delete[] coursesHashTable;
 }
 /** void courses::makeEmptyTable(int tableSize)
 *   This function creates an empty hash table of the size specified in the arguments passed to the constructor.
