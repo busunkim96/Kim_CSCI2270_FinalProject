@@ -45,7 +45,7 @@ int main()
             comm = -1;
             break;
         case 2:
-            if(test.hashTableMade && test.hashTableEmpty){
+            if(test.hashTableMade){
                 cout<<"Enter a csv file name (e.g., ""appm.csv"", ""courseList.csv""): ";
                 getline(cin, fileName);
                 test.fillTable(fileName);
